@@ -63,6 +63,8 @@ function handleLogin(res, user, password){
 
 app.post("/login", (req,res) => {
     const { identifier, password } = req.body;
+
+
     users.find({email: identifier}, (err, [user])=>{
         if(err){
             console.error(err);
@@ -70,6 +72,7 @@ app.post("/login", (req,res) => {
         }
         if(user)
             return handleLogin(res, user, password);
+
         users.find({username: identifier}, (err, [user])=>{
             if(err){
                 console.error(err);
@@ -83,16 +86,26 @@ app.post("/login", (req,res) => {
     res.send(500, "Something went very wrong");
 });
 
+
 app.get("/register", (req,res)=>{
     const { username, email, password } = req.body;
-    users.find({username}, (err, [user])=>{
+
+    users.find({username}, async (err, [user])=>{
         if(err){
             console.error(err);
             res.send(500, "Oopsie :(");
         } else if(!user){
             res.send(400, "User already exists");
         }
-        users.insert({username, email, password, verified: false, total_read: 0, karma: 0, read_today: 0}, (err)=>{
+        const res = await db.collection('users').add({
+            username: username,
+            email: email,
+            password: password,
+            verified: false,
+            total_read: 0,
+            karma: 0,
+            read_today: 0,
+          }).then((err)=>{
             if(err){
                 console.error(err);
                 res.send(500, "error adding user to database");
