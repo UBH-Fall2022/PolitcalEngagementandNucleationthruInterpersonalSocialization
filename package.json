@@ -1,0 +1,29 @@
+{
+  "name": "hornsupdatesout",
+  "version": "1.0.0",
+  "description": "- Teams can consist of between 1 and 4 people.\r - To have your submission be considered for judging, you must submit a 2-5 minute video along with your project. Try to keep it as concise as possible!\r - The projects submitted for judging cannot have been started prior to the start of the hackathon. In other words, teams can plan their projects in great detail, but they cannot begin writing code until they arrive at the hackathon.\r - Additionally, we are partnering with MLH this year, which means that our hackers must follow their code of conduct which can be found here.\r - Any and all resources used must be open source and specified in either the project, or the project description.\r - Your project must be publically available and under source control (organizers need to be able to view your code repository) -  you can use GitHub, GitLab, Bitbucket, or any other code hosting service\r - Projects can not have been submitted to another event, including other hackathons this weekend.\r - [Code of Conduct](https://drive.google.com/file/d/1RH_TtRu6EOHSbOoiSj2h1Q4jswtVILzE/view)",
+  "main": "index.js",
+  "scripts": {
+    "test": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/UBH-Fall2022/HornsUpDatesOut.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/UBH-Fall2022/HornsUpDatesOut/issues"
+  },
+  "homepage": "https://github.com/UBH-Fall2022/HornsUpDatesOut#readme",
+  "dependencies": {
+    "bcrypt": "^5.1.0",
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^8.5.1",
+    "mongodb": "4.11",
+    "pug": "^3.0.2"
+  }
+}
