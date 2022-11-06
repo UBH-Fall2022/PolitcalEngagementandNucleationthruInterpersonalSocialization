@@ -1,28 +1,23 @@
 doctype html
 html(lang="en")
     head 
-        title #{topic.title}
-        inlcude includes/head
+        title #{topic.get("title")}
+        include includes/head
     body 
-        include navbar
+        include includes/navbar
         .container-fluid
             .row 
                 .col
-                    h1 #{topic.title}
+                    h1 #{topic.get("title")}
                     p
-                        a(href="#{topic.context}") #{topic.context}
-            .row 
-                .col
-                    h3 #{posts.title}
-            -var x
-            -for (let x=0; x<3; x++){
-                .
-                    iframe(width='420', height='345', src=c[#{"x"}].youtubeURL)
-                    div
-                        img(src='./images/chatsnip.PNG', alt='chat')
-                        h3#demo
-                        p
-                        |    sales culture is collaborative with a
-                        br
-                        |    healthy dose of competitive spirit.
-            -}
+                        a(href=`${topic.get("context")}`) #{topic.get("context")}
+                    each paragraph in topic.get("content").split("\n")
+                        p= paragraph
+            - var x = 0;
+            while x < posts.length
+                .row 
+                    .col 
+                        h3 #{posts[x].title}
+                        each paragraph in post[x].content.split("\n")
+                            p= paragraph
+                - x++

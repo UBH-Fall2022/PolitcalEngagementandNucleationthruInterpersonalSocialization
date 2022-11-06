@@ -2,7 +2,6 @@
 const { initializeApp, applicationDefault, cert } = require('firebase-admin/app');
 const { getFirestore, Timestamp, FieldValue } = require('firebase-admin/firestore');
 const serviceAccount = require('./politicalsentimentsocialmedia-912a5a03cd6b.json');
-const permissions = require('db_functions.js');
 initializeApp({
   credential: cert(serviceAccount)
 });
@@ -36,9 +35,8 @@ app.post("/login", async (req,res) => {
     let users = await db.collection('users').where('email', '==', identifier).get();
     if(!users.size)
         users = await db.collection('users').where('username', '==', identifier).get();
-    if(!users.size){
+    if(!users.size)
         return res.status(404).send("User Not Found :(");
-    }
     const user = users.docs[0];
     bcrypt.compare(password, user.get("password"), (err, same)=>{
         if(err)
@@ -97,36 +95,38 @@ app.get("/chat", verifyToken, (req,res)=>{
     res.render("chat");
 });
 
-function getTopics(){
-    return db.collection("topics").get();
+async function getTopics(){
+    return await db.collection("topics").get();
 }
 
-function getTopic(topic_id){
-    return db.collection("topics").where("ID", "==", req.params.topic).get()?.docs?.[0];
+async function getTopic(topic_id){
+    if(!topic_id || topic_id == "")
+        throw new Error("topic_id is empty");   
+    return await db.collection("Topics").doc(topic_id).get();
 }
 
-function getTopicPosts(topic_id){
-    return getTopic(topic_id)?.get("posts").get();
+async function getTopicPosts(topic_id){
+    return await getTopic(topic_id)?.get("posts")?.get();
 }
 
-app.get("/chat/:topic/", verifyToken, (req,res)=>{
-    if(!req.params.topic)
+app.get("/chat/:topic/", verifyToken, async (req,res)=>{
+    if(!req.params.topic){
+        console.error("No topic");
         return res.redirect("/chat");
-    const topic = getTopic();
-    if(!topic)
-        return res.status(404).send("Topic Not Found");
+    }
+    const topic = await getTopic(req.params.topic);
+    if(!topic){ // 404
+        console.error("Topic Not Found");
+        return res.redirect("/");
+    }
     res.render("topic", {
         topic,
-        posts: getTopicPosts(req)
+        posts: await getTopicPosts(req.params.topic)
     });
 });
 
-app.get("/chat/:topic/:post", verifyToken, (req,res)=>{
-    const topic_collection = db.collection("topics").where("ID", "==", req.params.topic).get();
-    let topic = topic_collection.docs?.[0];
-    if(!topic)
-        return res.status(404).send("Topic Not Found");
-    const post_collection = topic.get("posts").get();
+app.get("/chat/:topic/:post", verifyToken, async (req,res)=>{
+    res.end();
 });
 
 app.post("/chat", verifyToken, (req,res)=>{

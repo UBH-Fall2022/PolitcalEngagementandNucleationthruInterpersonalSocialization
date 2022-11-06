@@ -3,7 +3,6 @@ body, html{
     background-color: #131026;
     color:aliceblue;
     height: 100vh;
-    z-index: -2;
 }
 body{
     text-align: center;

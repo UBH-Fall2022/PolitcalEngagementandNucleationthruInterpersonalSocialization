@@ -24,15 +24,17 @@ class shiningStar{
         }else{
             this.size -= 1;  
         }
-        this.obj.style.width = this.size + "px"
-        this.obj.style.height = this.size + "px"
-        this.obj.style.x = this.obj.style.x - 1 
-        this.obj.style.y = this.obj.style.y -1 
-        this.obj.style.opacity = this.size * 2 + "%"
+        this.obj.style.width = this.size + "px";
+        this.obj.style.height = this.size + "px";
+        this.obj.style.x = this.obj.style.x - 1;
+        this.obj.style.y = this.obj.style.y - 1;
+        this.obj.style.opacity = this.size * 2 + "%";
     }
+
     display(){
         thisBody[0].prepend(this.obj);
     }
+
     kill(){
         this.obj.remove();
     }
@@ -43,8 +45,8 @@ var genStars = setInterval(function(){
     const starImg = document.createElement("img")
     starImg.src = "/static/Star 4.svg"
     const myStarObj = new shiningStar(Math.random() * document.body.clientWidth, window.scrollY + Math.random() * document.body.clientHeight, starImg)
-    starImg.style.width = 0
-    starImg.style.height = 0
+    starImg.style.width = 0;
+    starImg.style.height = 0;
     starImg.classList.add("star");
     myStarObj.display()
     const starShine = setInterval(function(){
