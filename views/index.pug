@@ -3,13 +3,16 @@ html(lang="en")
     head
         title MyView
         include includes/head
-    body 
+        link(rel="stylesheet", href="/static/styles/index.css")
+    body
         include includes/navbar.pug
-        .container-fluid
-            .row 
-                .col-md-6
-                    .bubble
-                        .bubble-title 
-                            |What do we do?
-                        .bubble-content
-                            |We help facilitate political discourse
+        script(src="/static/scripts/index.js" defer) 
+        <div id="heading-row">
+        .what-we-do 
+            |What do we do?
+        .bubble-content
+            |We help facilitate political discourse
+        img(id="content" src="/static/Group 30.png", alt="", srcset="")                        
+        </div>
+                        
+                     

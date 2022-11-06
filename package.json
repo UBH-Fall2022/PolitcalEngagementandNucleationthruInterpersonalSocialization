@@ -19,12 +19,14 @@
   "homepage": "https://github.com/UBH-Fall2022/HornsUpDatesOut#readme",
   "dependencies": {
     "bcrypt": "^5.1.0",
+    "bigml": "^1.25.2",
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "firebase-admin": "^11.2.0",
     "jsonwebtoken": "^8.5.1",
     "mongodb": "4.11",
+    "nodemon": "^2.0.20",
     "pug": "^3.0.2"
   }
 }

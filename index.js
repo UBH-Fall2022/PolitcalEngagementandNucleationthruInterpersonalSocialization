@@ -103,4 +103,9 @@ app.post("/chat", verifyToken, (req,res)=>{
     // Make a 
 });
 
+app.get("/test", (_,r)=>{
+    r.render("includes/topicButton");
+})
+
+
 app.listen(80);
