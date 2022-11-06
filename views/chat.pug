@@ -10,11 +10,11 @@ html(lang="en")
                 form(action="/chat", method="post") 
                     input(type="text" name="message")
                     input(type="submit", value="Send")
-            .row 
-                each topic in topics 
-                    .row 
-                        .col
-                            .topic-box 
-                                h3= topic.get("title")
-                                span By: #{topic.get("author")}
-                                span(style="float: right;")= "10/2/2022"
+            each topic in topics 
+                .row 
+                    .col
+                        .topic-box 
+                            h3
+                                a(href=`/chat/${topic.id}`)= topic.get("title")
+                            span By: #{topic.get("author")}
+                            span(style="float: right;")= "10/2/2022"

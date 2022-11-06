@@ -147,10 +147,11 @@ app.get("/chat/:topic/", verifyToken, async (req,res)=>{
         return res.redirect("/");
     }
     console.log(await getTopicPosts(req.params.topic));
-    res.render("topic", {
-        topic,
-        posts: shuffle(await getTopicPosts(req.params.topic))
-    });
+    res.send("acsaa");
+    // res.render("topic", {
+    //     topic,
+    //     posts: shuffle(await getTopicPosts(req.params.topic))
+    // });
 });
 
 app.get("/chat/:topic/:post", verifyToken, async (req,res)=>{
