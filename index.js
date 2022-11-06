@@ -30,25 +30,6 @@ app.get("/login", verifyToken, (req,res) => {
     res.render("login");
 });
 
-function handleLogin(res, user, password){
-    bcrypt.compare(password, user.get("password"), (err, same)=>{
-        if(err)
-            // redirect to error page
-            return res.status(500, err);
-        if(!same)
-            return res.status(400).send("Bad Password");
-        // Validate URL
-        jwt.sign({ username: user.username }, process.env.KEY, { algorithm: 'RS256' }, function(err, token) {
-            if(err)
-                return res.status(500).send("token not created");
-            res.cookie("token", token);
-            if(req.query.next)
-                return res.redirect(req.query.next);
-            return res.redirect(".");
-        });
-    });
-}
-
 app.post("/login", async (req,res) => {
     const { identifier, password } = req.body;
     let users = await db.collection('users').where('email', '==', identifier).get();
@@ -58,7 +39,21 @@ app.post("/login", async (req,res) => {
         return res.status(404).send("User Not Found :(");
     }
     const user = users.docs[0];
-    return handleLogin(res, user, password);
+    bcrypt.compare(password, user.get("password"), (err, same)=>{
+        if(err)
+            // redirect to error page
+            return res.status(500, err);
+        if(!same)
+            return res.status(400).send("Bad Password");
+        // Validate URL
+        jwt.sign({ username: user.get("username") }, process.env.KEY, function(err, token) {
+            if(err)
+                return res.status(500).send("token not created");
+            if(req.query.next)
+                return res.cookie("token", token).redirect(req.query.next);
+            return res.cookie("token", token).redirect(".");
+        });
+    });
 });
 
 app.get("/register", verifyToken, (req,res) => {
@@ -83,11 +78,12 @@ app.post("/register", async (req,res)=>{
         karma: 0,
         read_today: 0,
     });
-    jwt.sign({username: username}, process.env.KEY, { algorithm: 'RS256' }, function(err, token) {
+    jwt.sign({username: username}, process.env.KEY, function(err, token) {
         if(err){
             console.error(err);
             return res.status(500).send("jwt failed");
         }
+        console.log("Token: ", token);
         res.cookie("token", token);
         if(req.query.next)
             return res.redirect(req.query.next);
