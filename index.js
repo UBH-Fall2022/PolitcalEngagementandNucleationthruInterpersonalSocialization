@@ -83,7 +83,6 @@ app.post("/register", async (req,res)=>{
             console.error(err);
             return res.status(500).send("jwt failed");
         }
-        console.log("Token: ", token);
         res.cookie("token", token);
         if(req.query.next)
             return res.redirect(req.query.next);
@@ -97,15 +96,41 @@ app.get("/chat", verifyToken, (req,res)=>{
     res.render("chat");
 });
 
+function getTopics(){
+    return db.collection("topics").get();
+}
+
+function getTopic(topic_id){
+    return db.collection("topics").where("ID", "==", req.params.topic).get()?.docs?.[0];
+}
+
+function getTopicPosts(topic_id){
+    return getTopic(topic_id)?.get("posts").get();
+}
+
+app.get("/chat/:topic/", verifyToken, (req,res)=>{
+    if(!req.params.topic)
+        return res.redirect("/chat");
+    const topic = getTopic();
+    if(!topic)
+        return res.status(404).send("Topic Not Found");
+    res.render("topic", {
+        topic,
+        posts: getTopicPosts(req)
+    });
+});
+
+app.get("/chat/:topic/:post", verifyToken, (req,res)=>{
+    const topic_collection = db.collection("topics").where("ID", "==", req.params.topic).get();
+    let topic = topic_collection.docs?.[0];
+    if(!topic)
+        return res.status(404).send("Topic Not Found");
+    const post_collection = topic.get("posts").get();
+});
+
 app.post("/chat", verifyToken, (req,res)=>{
     if(req.anonymous)
         return res.sendStatus(401);
-    // Make a 
 });
-
-app.get("/test", (_,r)=>{
-    r.render("includes/topicButton");
-})
-
 
 app.listen(80);
