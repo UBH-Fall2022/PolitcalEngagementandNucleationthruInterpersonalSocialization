@@ -211,7 +211,7 @@ app.post("/chat/:topic", verifyToken, async (req,res)=>{
     const username = req.JWTBody.username;
     const users = await db.collection("users").where("username", "==", username).get();
     const user = users.docs[0];
-    if(canUserPost(user)){
+    if(permissions.canUserPost(user)){
         db.collection("Topics").doc(req.params.topic).collection("Posts").add({
             author: username,
             date: new Date().toISOString(),
