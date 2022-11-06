@@ -18,5 +18,3 @@ html(lang="en")
                                 h3= topic.get("title")
                                 span By: #{topic.get("author")}
                                 span(style="float: right;")= "10/2/2022"
-                                each paragraph in topic.get("content").split("\n")
-                                    p= paragraph

@@ -94,17 +94,35 @@ async function getTopics(){
     return (await db.collection("Topics").get()).docs;
 }
 
+async function getPosts(topic_id){
+    const topic = getTopic(topic_id);
+    if(!topic)
+        return null;
+    return (await topic.collection("Posts")).docs;
+}
+
 async function getTopic(topic_id){
     if(!topic_id || topic_id == "")
-        throw new Error("topic_id is empty");   
+        return null;  
     return await db.collection("Topics").doc(topic_id).get();
+}
+
+async function getPost(post_id, topic_id){
+    return await getTopic(topic_id).collection("Posts").doc(post_id).get();
 }
 
 async function getTopicPosts(topic_id){
     const topic = await getTopic(topic_id);
     if(!topic || !topic.exists)
         return null;
-    return await topic.get("posts").get();
+    return await topic.collection("posts").get();
+}
+
+async function getPostComments(post_id, topic_id){
+    const topic = await getTopic(topic_id);
+    if(!topic || !topic.exists)
+        return null;
+    return (await getPost(post_id, topic_id).collection("Comments").get).docs;
 }
 
 app.get("/chat", verifyToken, async (req,res)=>{
@@ -129,7 +147,7 @@ app.get("/chat/:topic/", verifyToken, async (req,res)=>{
     console.log(await getTopicPosts(req.params.topic));
     res.render("topic", {
         topic,
-        // posts: await getTopicPosts(req.params.topic)
+        posts: await getTopicPosts(req.params.topic)
     });
 });
 
@@ -154,6 +172,6 @@ app.get("/rules", verifyToken, (req, res)=>{
 app.get("/aboutus", verifyToken, (req, res)=>{
     res.render("aboutus")
 })
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 80;
 
 app.listen(PORT);
