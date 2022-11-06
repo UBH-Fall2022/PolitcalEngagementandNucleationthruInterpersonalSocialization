@@ -1,9 +1,14 @@
 // Political Engagement and Nucleation by Interpersonal Socialization (PENIS)
+const { initializeApp, applicationDefault, cert } = require('firebase-admin/app');
+const { getFirestore, Timestamp, FieldValue } = require('firebase-admin/firestore');
+const serviceAccount = require('./politicalsentimentsocialmedia-912a5a03cd6b.json');
+initializeApp({
+  credential: cert(serviceAccount)
+});
+const db = getFirestore();
 
 const express = require("express");
 const app = express();
-const db = require("mongodb");
-
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const verifyToken = require("./verifyToken.js");
@@ -43,38 +48,35 @@ function handleLogin(res, user, password){
     });
 }
 
-app.post("/login", (req,res) => {
+app.post("/login", async (req,res) => {
     const { identifier, password } = req.body;
-    const userQuerySnapshot = db.collection('users').where('username', '==', identifier).get()
+    const userQuerySnapshot = await db.collection('users').where('email', '==', identifier).get()
     if(userQuerySnapshot.size > 1){
         res.send(500, "You're a dumbass. You broke everything. Now watch it burn!");
         throw new Error("Two usernames same name");
-    }
-    else if(userQuerySnapshot.size == 1){
-        const user = userQuerySnapshot.docs[0]
+    }else if(userQuerySnapshot.size == 1){
+        const user = userQuerySnapshot.docs.data()
         return handleLogin(res, user, password);
-    }else {
-        const userQuerySnapshot = db.collection('users').where('email', '==', identifier).get()
-        if(userQuerySnapshot.size > 1){
-            res.send(500, "You're a dumbass. You broke everything. Now watch it burn!");
-            throw new Error("Two usernames same name");
-        }else if(userQuerySnapshot.size == 1){
-            const user = userQuerySnapshot.docs[0]
-            return handleLogin(res, user, password);
-        }else if (!user){
-            res.send(404, "User Not Found :(");
-        }
-        console.error(err);
-        res.send(500, "Oopsie :(");
+    }else if (!user){
+        res.send(404, "User Not Found :(");
     }
-    res.send(500, "Something went very wrong");
+    console.error(err);
+    res.send(500, "Oopsie :(");
 });
 
+app.get("/register", verifyToken, (req,res) => {
+    res.render("register");
+});
 
-app.get("/register", async (req,res)=>{
+app.post("/register", async (req,res)=>{
     const { username, email, password } = req.body;
-    const user = db.collection('users').where('username', '==', username).get()
-    if(user){
+    console.log(username);
+    const userQuerySnapshot = await db.collection('users').where('username', '==', username).get()
+    console.log(userQuerySnapshot);
+    if(userQuerySnapshot.size > 1){
+        res.send(500, "You're a dumbass. You broke everything. Now watch it burn!");
+        throw new Error("Two usernames same name");
+    }else if(userQuerySnapshot.size == 1){
         return res.send(400, "User already exists");
     }
     await db.collection('users').add({
@@ -86,9 +88,9 @@ app.get("/register", async (req,res)=>{
         karma: 0,
         read_today: 0,
     });
-    jwt.sign({username: user.username}, process.env.KEY, { algorithm: 'RS256' }, function(err, token) {
+    jwt.sign({username: username}, process.env.KEY, { algorithm: 'RS256' }, function(err, token) {
         if(err)
-            res.sendStatus(500);
+            return res.sendStatus(500);
         res.cookie("token", token);
         if(req.query.next)
             return res.redirect(req.query.next);

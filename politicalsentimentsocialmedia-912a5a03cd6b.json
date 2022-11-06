@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "politicalsentimentsocialmedia",
+  "private_key_id": "912a5a03cd6be13d8cafb706eb5c9dbbf22bc1e5",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCsDjtOvaIRP6Tg\nuMkIkhXc/c9fNMtIzcXPv0gIe7Ywe1U0+koUNmSeQhiYBk9UzG4KvwrPF/3Cg+yA\n6wwJoW/S+dJyyz8DNeCQv7yEkypT/gkLyeuJo1GBb4J71g1v20bzEKbNQ5/0Q+Eq\n8TNH5MXGzi0li1VKnhjYwvhunJNmnY0+poXn2IElhEE3ajdARPJWFybEdNj8RDv7\n0MIJ4P2JRzYWeREhWGB09+9CFg0Yp/knJArLBaK8qyFT+dJi5PollbRWMWgB0rD5\nPfsfmXCgJb3Pi6Tu+dE2nDe6+uXIJHp6ewDhHopzLzXpJ/UmOz/EA4VyT4HSgq9Y\nSxZOLhaJAgMBAAECggEAIY85FDe61+BxGYARfkF4UD2VaD2U9SNl1Qq7UyRGOhik\nWwwCzQR7Bb9gqq54ZNLnF+OBiTllvr4asF6oX2yEskMWQFvSc57bqYAsljNaSz2+\np/T/oz4e1L9aVStAPbQol5qE3n61QWDIF6cqWHiP9yIZ/ju6LC7AK++Do5eYzKfW\ngLVhoK4QyVfDbnJtIJacAFteMRWMBDI9slgH7jWRzhRgjHFwoVQq3Qgav1CkyV6l\n9SZgm1YEbCs1qAtnVYpd7thp9RNk8MfDxXXaAQrrlXrG9XujxbKINpfAT+M36uWN\nguGSc/O1IlDhSfb5zn/bmjR3oQDjtDT1hnoBe4oE8QKBgQDcKA4Se7iZcv8M8Z/j\nzoGTWp+vtHaOphS4Sm1Ks7RbUs1hfQ38yKb3WkmxWyteqSqTGZp8NB1O08HIsA0H\nOA6qmyzuMRv8Hpd4W5vbYGZp1vMYhT8TkkayZw9ABNGH9N4rc6x4LewogMjmU9x5\nUYTHe6auLs70FHZ6Zj2adfqN3QKBgQDIEV7yoU0n5PnxmZB/ZwjAWi9g3SvJ7mcS\nAp8zM4nRLqRQd6dWifuGcG9nG70y7mPCDyH7+wIL+HWi1XMVm3kEb8l3Y/XMkpHx\n/1nCNGqguO3TU3/Ur02lujkZH4fqfWQj4W97JsmAaCfgN+fQ39WRsfYl1q/xRcty\nN9rROh8OnQKBgQDLzNiaC6XrhyTL2rFktToGKpJAmRJXIy9zGpLp4ElJcPFnGdjk\n9Op7eD1XzUnsqzUaT01PRP8MhcKSAUdOM3qAPH3vUc7SKY+Wf1dcUXT87VrEjDTD\n7Vk8tWLMpKlC7k7scnxqFDjVlcJkVaV3ORttfu3huLsj//1deV/1qNl0kQKBgQCG\nX2xnB8FbhyX8iAiOGTS+hJQHueS8NpwRc6Nbb0UkMvB3fzXsILbH3+Ji3TWg7I4h\n+6n2pOsGATV5TWWDYK3SNgaZYpDnepX9dGTj0/K9yhcp9Y4I2kkLg1zwK8ZMzzUg\nCDyo+S8jSFFn/gR7vKqjtWQ+m8gGA7uWFj+ogSH03QKBgEhfQJFUYuCqIFTulWMj\nC8EJD/OJZ6HwGyjJlTJcFfioQvkJqsul0LAYHmZwdddXqLF8yr8e4C/ZOQzdSI4d\nmopglpWgfcjAADdSKnazChKB4wmhEqs2y3+IKwL//Ei9cV0O1tXakjcf1Rea94UR\nl5juiTrznkM4zBNnW0udzUc8\n-----END PRIVATE KEY-----\n",
+  "client_email": "politicalsentimentsocialmedia@appspot.gserviceaccount.com",
+  "client_id": "100314552495545048296",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/politicalsentimentsocialmedia%40appspot.gserviceaccount.com"
+}
