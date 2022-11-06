@@ -90,14 +90,8 @@ app.post("/register", async (req,res)=>{
     });
 });
 
-app.get("/chat", verifyToken, (req,res)=>{
-    if(req.anonymous)
-        return res.redirect(`/login?next=${req.originalUrl}`);
-    res.render("chat");
-});
-
 async function getTopics(){
-    return await db.collection("topics").get();
+    return (await db.collection("Topics").get()).docs;
 }
 
 async function getTopic(topic_id){
@@ -107,8 +101,20 @@ async function getTopic(topic_id){
 }
 
 async function getTopicPosts(topic_id){
-    return await getTopic(topic_id)?.get("posts")?.get();
+    const topic = await getTopic(topic_id);
+    if(!topic || !topic.exists)
+        return null;
+    return await topic.get("posts").get();
 }
+
+app.get("/chat", verifyToken, async (req,res)=>{
+    if(req.anonymous)
+        return res.redirect(`/login?next=${req.originalUrl}`);
+    const topics = await getTopics();
+    res.render("chat", {
+        topics: await getTopics(),
+    });
+});
 
 app.get("/chat/:topic/", verifyToken, async (req,res)=>{
     if(!req.params.topic){
@@ -120,9 +126,10 @@ app.get("/chat/:topic/", verifyToken, async (req,res)=>{
         console.error("Topic Not Found");
         return res.redirect("/");
     }
+    console.log(await getTopicPosts(req.params.topic));
     res.render("topic", {
         topic,
-        posts: await getTopicPosts(req.params.topic)
+        // posts: await getTopicPosts(req.params.topic)
     });
 });
 
@@ -133,6 +140,11 @@ app.get("/chat/:topic/:post", verifyToken, async (req,res)=>{
 app.post("/chat", verifyToken, (req,res)=>{
     if(req.anonymous)
         return res.sendStatus(401);
+    const username = req.JWTBody.username;
+    const user = db.collection("Users").where("username", "==", username).get();
+    if(user.get("karma") >= 50){
+        // Make topic
+    }
 });
 
 app.get("/rules", verifyToken, (req, res)=>{

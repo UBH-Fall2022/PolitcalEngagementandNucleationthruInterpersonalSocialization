@@ -10,7 +10,7 @@ async function getUser_Connection(userPk, connectPk, dbName){
 async function getUser_Posts(userPk, postPk){
     try{
         return await getUser_Connection(userPk, postPk, "user_post");
-    } 
+    }
     catch (err) {
         throw err;
     }

@@ -5,6 +5,18 @@ html(lang="en")
         title Chat
     body 
         include includes/navbar
-        form(action="/chat", method="post") 
-            input(type="text" name="message")
-            input(type="submit", value="Send")
+        .container-fluid
+            .row
+                form(action="/chat", method="post") 
+                    input(type="text" name="message")
+                    input(type="submit", value="Send")
+            .row 
+                each topic in topics 
+                    .row 
+                        .col
+                            .topic-box 
+                                h3= topic.get("title")
+                                span By: #{topic.get("author")}
+                                span(style="float: right;")= "10/2/2022"
+                                each paragraph in topic.get("content").split("\n")
+                                    p= paragraph

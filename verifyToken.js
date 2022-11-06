@@ -1,12 +1,12 @@
 const jwt = require('jsonwebtoken');
 require("dotenv/config");
 function verifyToken(req,res,next){
-	if(typeof req.cookies.access_token === 'undefined' || !req.cookies.access_token || req.cookies.access_token == ''){
+	if(typeof req.cookies.token === 'undefined' || !req.cookies.token || req.cookies.token == ''){
 		req.anonymous = true;
 		next();
 	} else {
-		if(typeof req.cookies.access_token !== 'undefined'){
-			jwt.verify(req.cookies.access_token,process.env.KEY, function(err, decoded) {
+		if(typeof req.cookies.token !== 'undefined'){
+			jwt.verify(req.cookies.token,process.env.KEY, function(err, decoded) {
 				req.anonymous = false;
 				if(err){
 					res.status(403).send("Invalid token");
