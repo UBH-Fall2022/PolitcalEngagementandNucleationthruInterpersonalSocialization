@@ -8,9 +8,12 @@ html(lang="en")
         include includes/navbar.pug
         script(src="/static/scripts/index.js" defer) 
         div#heading-row
+            p 
             .what-we-do 
                 |What do we do?
             .bubble-content
                 |We help facilitate political discourse
-            a(href="chat") <button id="Go Start" style="position: absolute;top: 140%;left: 60%;width: 7em;height: 6em;z-index:4;">Go</button>
+            p.mt-2
+                a.text-white(href="/chat")
+                    u Get Started
             img(id="content" src="/static/Group 30.png", alt="", srcset="")

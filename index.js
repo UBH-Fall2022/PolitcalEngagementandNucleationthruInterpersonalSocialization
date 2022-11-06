@@ -77,6 +77,7 @@ initializeApp({
 });
 const db = getFirestore();
 const shuffle = require("./viewShuffler.js");
+const bigml = require("./bigML.js");
 
 const express = require("express");
 const app = express();
@@ -284,7 +285,8 @@ app.post("/chat/:topic", verifyToken, async (req,res)=>{
             author: username,
             date: new Date().toISOString(),
             title,
-            content
+            content,
+            politicization_index: await bigml(content)
         });
         res.redirect(req.originalUrl);
     }
@@ -301,7 +303,8 @@ app.post("/chat/:topic/:post", verifyToken, async (req,res)=>{
         await db.collection("Topics").doc(req.params.topic).collection("Posts").doc(req.params.post).collection("Comments").add({
             author: username,
             date: new Date().toISOString(),
-            content
+            content,
+            politicization_index: await bigml(content)
         });
         userCommented(user.id, req.params.topic);
         res.redirect(req.originalUrl);

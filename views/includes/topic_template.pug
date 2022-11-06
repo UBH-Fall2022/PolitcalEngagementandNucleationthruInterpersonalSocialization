@@ -1,6 +1,6 @@
 mixin topic_template(topic)
     .topic
         h3
-            a(href=`/chat/${topic.id}`)= topic.get("title")
+            a(href=`/chat/${topic.id}` style="color: #FFD166 !important;")= topic.get("title")
         span By: #{topic.get("author")}
         span= topic.get("date")
