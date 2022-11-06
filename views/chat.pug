@@ -9,7 +9,7 @@ html(lang="en")
         include includes/navbar
         .container-fluid
             .row.mt-2
-                .col
+                .col(id="form")
                     form.text-white(action="/chat", method="post")
                         .form-row.my-2
                             .col-md-4
@@ -23,7 +23,7 @@ html(lang="en")
                                 input.form-control(type="url" name="context" placeholder="https://www....")
                         .form-row.my-2
                             .col-md-4
-                                p.text-center #{user_karma}/50
+                                p.text-center(id="user_karma" ,style="z-index: 3") #{user_karma}/50
                             .col-md-8
                                 input.w-100.btn.btn-outline-primary(type="submit", value="Post")
             include includes/topic_template
@@ -31,3 +31,4 @@ html(lang="en")
                 each topic in topics 
                     +topic_template(topic)
             </div>
+            script(src="/static/scripts/chat.js" defer)
