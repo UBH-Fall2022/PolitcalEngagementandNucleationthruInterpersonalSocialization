@@ -4,11 +4,11 @@ const deepnet = new bigml.LocalDeepnet(
 module.exports = async function(inputText){
     return new Promise((resolve, reject) => {
         deepnet.predict({"Tweet": inputText}, (err, data)=>{
-            if(err)
+            if(err){
                 return reject(err);
-            score=data["probability"]
+            } score=data["probability"];
             if (data["prediction"]=='Democrat'){
-                score*=-1
+                score*=-1;
             } resolve(score);
         });
     });
