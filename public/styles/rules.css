@@ -1,0 +1,21 @@
+body{
+    background-color: #A6A6A6;
+}
+
+.title{
+    font-family: ABeeZee;
+    font-style: italic;
+    font-size: 4em;
+    text-align: center;
+
+}
+.title_blob{
+    background-color: #118AB2;
+}
+ol{
+    background-color: #118AB2;
+    margin: 30px 20vw;
+    border-radius: 100px;
+    text-align: center;
+    padding: 40px 60px;
+}

@@ -1,0 +1,9 @@
+#team{
+    width: 100vw;
+}
+
+.description{
+    margin: 2em 4em;
+    text-align: center;
+    color: #000ccc;
+}

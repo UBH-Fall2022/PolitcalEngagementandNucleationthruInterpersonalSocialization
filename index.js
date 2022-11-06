@@ -135,4 +135,12 @@ app.post("/chat", verifyToken, (req,res)=>{
         return res.sendStatus(401);
 });
 
+app.get("/rules", verifyToken, (req, res)=>{
+    res.render("rules")
+})
+
+app.get("/aboutus", verifyToken, (req, res)=>{
+    res.render("aboutus")
+})
+
 app.listen(80);
