@@ -5,6 +5,7 @@ html(lang="en")
         title Chat
         link(rel="stylesheet" href="/static/styles/chat.css")
         link(rel="stylesheet" href="/static/styles/global.css")
+        link(rel="stylesheet", href="/static/styles/topic_template.css")
     body 
         include includes/navbar
         .container-fluid
@@ -27,8 +28,6 @@ html(lang="en")
                             .col-md-8
                                 input.w-100.btn.btn-outline-primary(type="submit", value="Post")
             include includes/topic_template
-            <div class="topicHolder">
+            .topicHolder
                 each topic in topics 
                     +topic_template(topic)
-            </div>
-            script(src="/static/scripts/chat.js" defer)
