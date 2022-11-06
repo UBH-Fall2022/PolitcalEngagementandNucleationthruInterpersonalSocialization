@@ -1,0 +1,28 @@
+doctype html
+html(lang="en")
+    head 
+        title #{topic.title}
+        inlcude includes/head
+    body 
+        include navbar
+        .container-fluid
+            .row 
+                .col
+                    h1 #{topic.title}
+                    p
+                        a(href="#{topic.context}") #{topic.context}
+            .row 
+                .col
+                    h3 #{posts.title}
+            -var x
+            -for (let x=0; x<3; x++){
+                .
+                    iframe(width='420', height='345', src=c[#{"x"}].youtubeURL)
+                    div
+                        img(src='./images/chatsnip.PNG', alt='chat')
+                        h3#demo
+                        p
+                        |    sales culture is collaborative with a
+                        br
+                        |    healthy dose of competitive spirit.
+            -}
