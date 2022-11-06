@@ -50,7 +50,7 @@ async function userRead(user_id, post_id){
     await db.collection("User_Post").doc(user_post_doc.id).update({comments_read: user_post_doc.get("comments_read") + 1});
 }
 
-async function userCommented(user_id, tppic_id){
+async function userCommented(user_id, topic_id){
     const user_topic_query = await db.collection("User_Topic").where("user_id", "==", user_id).where("topic_id", "==", topic_id).get();
     if(user_topic_query.size == 0){
         db.collection("User_Topic").add({
@@ -62,7 +62,7 @@ async function userCommented(user_id, tppic_id){
     }
     const user_topic_doc = user_topic_query.docs[0];
     const user_doc = await db.collection("users").doc(user_id);
-    await user_doc.update({karma: user_doc.get("karma") + 1});
+    await user_doc.update({karma: user_doc.get("karma") + 2});
     await db.collection("User_Topic").doc(user_topic_doc.id).update({comments_made: user_topic_doc.get("comments_made") + 1});
 }
 
@@ -212,12 +212,11 @@ app.get("/chat/:topic/", verifyToken, async (req,res)=>{
     const username = req.JWTBody.username;
     const users = await db.collection("users").where("username", "==", username).get();
     const user = users.docs[0];
-    const user_topic = (await userCommentsMade(user.id, req.params.topic))?.docs?.[0];
     res.render("topic", {
         topic,
         posts: shuffle(posts.docs),
         user_id: user.id,
-        comments_made: user_topic?.get("comments_made") ?? 0
+        comments_made: await userCommentsMade(user.id, req.params.topic) ?? 0
     });
 });
 
@@ -285,7 +284,8 @@ app.post("/chat/:topic", verifyToken, async (req,res)=>{
         db.collection("Topics").doc(req.params.topic).collection("Posts").add({
             author: username,
             date: new Date().toISOString(),
-            title
+            title,
+            content
         });
         res.redirect(req.originalUrl);
     }
@@ -299,11 +299,12 @@ app.post("/chat/:topic/:post", verifyToken, async (req,res)=>{
     const users = await db.collection("users").where("username", "==", username).get();
     const user = users.docs[0];
     if(canUserComment(user.id, req.params.post)){
-        db.collection("Topics").doc(req.params.topic).collection("Posts").doc(req.params.post).collection("Comments").add({
+        await db.collection("Topics").doc(req.params.topic).collection("Posts").doc(req.params.post).collection("Comments").add({
             author: username,
             date: new Date().toISOString(),
             content
         });
+        userCommented(user.id, req.params.topic);
         res.redirect(req.originalUrl);
     }
 });
