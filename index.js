@@ -11,10 +11,11 @@ async function getUser_Other(user_id, other_id, otherName, dbName){
 }
 
 async function userCommentsRead(user_id, post_id){
-    const user_post_query = await getUser_Other(user_id, post_id, "post", "user_post");
-    if(!user_post_query.size)
+    let data = await db.collection("User_Post").where("user_id", "==", user_id).where("post_id", "==", post_id).get();
+    if(data.size == 0)
         return 0;
-    return user_post.query.docs[0].get("comments_read");
+    else
+        return user_post.query.docs[0].get("comments_read");
 }
 
 async function userCommentsMade(user_id, topic_id){
