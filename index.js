@@ -142,5 +142,6 @@ app.get("/rules", verifyToken, (req, res)=>{
 app.get("/aboutus", verifyToken, (req, res)=>{
     res.render("aboutus")
 })
+const PORT = process.env.PORT || 8080;
 
-app.listen(80);
+app.listen(PORT);
