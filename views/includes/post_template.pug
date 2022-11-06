@@ -1,6 +1,7 @@
 mixin post_template(post)
     .row 
         .col.text-white
-            h3 #{post.title}
+            h3
+                a(href=`/chat/${topic.id}/${post.id}`)= post.get("title")
             each paragraph in post.get("content").split("\n")
                 p= paragraph

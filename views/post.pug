@@ -5,4 +5,34 @@ html(lang="en")
         include includes/head
     body 
         include includes/navbar
-        
+        .container-fluid
+            .row
+                .col
+                    h1.text-white.text-center= topic.get("title")
+                    a.text-white.d-block.text-center(href=`${topic.get("context")}`)= topic.get("context")
+            hr
+            .row 
+                .col
+                    h3.text-white= post.get("title")
+                    each paragraph in post.get("content") ? post.get("content").split("\n") : []
+                        p.text-white= paragraph
+            hr
+            .row 
+                .col
+                    form.text-white(method="POST")
+                        .form-row.my-2
+                            .col-md-4
+                                label(for="content") Leave a Comment 
+                            .col-md-8
+                                textarea.form-control#content(name="content" placeholder="Put your message here")
+                        .form-row.my-2
+                            .col-md-4.d-flex.justify-content-center
+                                progress.w-50.h-100.mx-auto(min=0 max=4 value=`${comments_read}`)
+                            .col-md-8
+                                input.w-100.btn.btn-outline-primary(type="submit", value="Post")
+            hr
+            include includes/comment_template
+            each comment in comments
+                +comment_template(comment)
+            span.d-none#user_id= user_id
+            script(src="/static/scripts/update_comment_read.js") 

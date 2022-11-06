@@ -2,7 +2,86 @@
 const { initializeApp, applicationDefault, cert } = require('firebase-admin/app');
 const { getFirestore, Timestamp, FieldValue } = require('firebase-admin/firestore');
 const serviceAccount = require('./politicalsentimentsocialmedia-912a5a03cd6b.json');
-const permissions = require('./db_functions.js');
+
+// db_functions.js 
+
+async function getUser_Other(user_id, other_id, otherName, dbName){
+    let user_post = await db.collection(dbName).where('user_id', '==', user_id).where(`${otherName}_id`, '==', other_id).get();
+    return user_post;
+}
+
+async function userCommentsRead(user_id, post_id){
+    const user_post_query = await getUser_Other(user_id, post_id, "post", "user_post");
+    if(!user_post_query.size)
+        return 0;
+    return user_post.query.docs[0].get("comments_read");
+}
+
+async function userCommentsMade(user_id, topic_id){
+    const user_topic_query = await getUser_Other(user_id, topic_id, "topic", "user_topic");
+    if(!user_topic_query.size)
+        return 0;
+    return user_topic_query.docs[0].get("comments_made");
+}
+
+// Expect paramaters are preprocessed maps
+async function canUserThis(user_doc, other_id, field){
+    switch(field){
+        case "comment":
+            return userCommentsRead(user.id, other_id) >= 4;
+        case "post":
+            return userPostsInteractedWith(user.id, other_id) >= 4;
+        default:
+            throw new Error("Unimplemented field");
+    }
+}
+
+async function canUserComment(user_post){
+    return await canUserThis(user_post, "comments_read");
+}
+
+async function canUserPost(user_topic){
+    return await canUserThis(user_topic, "comments_made");
+}
+
+async function userRead(user_id, post_id){
+    const user_post_query = await db.collection("User_Post").where("user_id", "==", user_id).where("post_id", "==", post_id).get();
+    if(user_post_query.size == 0){
+        db.collection("User_Post").add({
+            user_id,
+            post_id,
+            comments_read: 1
+        });
+        return;
+    }
+    const user_post_doc = user_post_query.docs[0];
+    const user_doc = await db.collection("users").doc(user_id);
+    await user_doc.update({karma: user_doc.get("karma") + 1});
+    await db.collection("User_Post").doc(user_post_doc.id).update({comments_read: user_post_doc.get("comments_read") + 1});
+}
+
+async function userCommented(user_id, tppic_id){
+    const user_topic_query = await db.collection("User_Topic").where("user_id", "==", user_id).where("topic_id", "==", topic_id).get();
+    if(user_topic_query.size == 0){
+        db.collection("User_Topic").add({
+            user_id,
+            topic_id,
+            comments_made: 0
+        });
+        return;
+    }
+    const user_topic_doc = user_topic_query.docs[0];
+    const user_doc = await db.collection("users").doc(user_id);
+    await user_doc.update({karma: user_doc.get("karma") + 1});
+    await db.collection("User_Topic").doc(user_topic_doc.id).update({comments_made: user_topic_doc.get("comments_made") + 1});
+}
+
+async function userPosted(user){
+    const cur_karma = user.get('karma')
+    return await user.update({karma: cur_karma + 4})
+}
+
+
 initializeApp({
   credential: cert(serviceAccount)
 });
@@ -95,13 +174,6 @@ async function getTopics(){
     return (await db.collection("Topics").get()).docs;
 }
 
-async function getPosts(topic_id){
-    const topic = getTopic(topic_id);
-    if(!topic)
-        return null;
-    return (await topic.collection("Posts")).docs;
-}
-
 async function getTopic(topic_id){
     if(!topic_id || topic_id == "")
         return null;  
@@ -117,10 +189,7 @@ async function getTopicPosts(topic_id){
 }
 
 async function getPostComments(post_id, topic_id){
-    const topic = await getTopic(topic_id);
-    if(!topic || !topic.exists)
-        return null;
-    return (await getPost(post_id, topic_id).collection("Comments").get).docs;
+    return await db.collection("Topics").doc(topic_id).collection("Posts").doc(post_id).collection("Comments").get();
 }
 
 app.get("/chat", verifyToken, async (req,res)=>{
@@ -132,11 +201,14 @@ app.get("/chat", verifyToken, async (req,res)=>{
     const user = temp.docs[0];
     res.render("chat", {
         topics: await getTopics(),
+        user_id: user.id,
         user_karma: user.get("karma"),
     });
 });
 
 app.get("/chat/:topic/", verifyToken, async (req,res)=>{
+    if(req.anonymous)
+        return res.redirect(`/login?next=${req.originalUrl}`);
     if(!req.params.topic){
         console.error("No topic");
         return res.redirect("/chat");
@@ -150,16 +222,18 @@ app.get("/chat/:topic/", verifyToken, async (req,res)=>{
     const username = req.JWTBody.username;
     const users = await db.collection("users").where("username", "==", username).get();
     const user = users.docs[0];
-    const user_post = await permissions.getUser_Posts(user.id, req.params.topic)
-
+    const user_topic = (await userCommentsMade(user.id, req.params.topic))?.docs?.[0];
     res.render("topic", {
         topic,
         posts: shuffle(posts.docs),
-        comments_read: await numUserRead(user_post)
+        user_id: user.id,
+        comments_made: user_topic?.get("comments_made") ?? 0
     });
 });
 
 app.get("/chat/:topic/:post", verifyToken, async (req,res)=>{
+    if(req.anonymous)
+        return res.redirect(`/login?next=${req.originalUrl}`);
     if(!req.params.topic){
         console.error("No topic");
         return res.redirect("/chat");
@@ -173,26 +247,32 @@ app.get("/chat/:topic/:post", verifyToken, async (req,res)=>{
         console.error("No post");
         return res.redirect("/chat");
     }
-    const post = await getPost(req.params.post);
+    // Unsafe:
+    const user = (await db.collection("users").where("username", "==", req.JWTBody.username).get()).docs[0];
+    const post = await getPost(req.params.post, req.params.topic);
     if(!post){ // 404
         console.error("Post Not Found");
         return res.redirect("/");
     }
-    res.render("topic", {
+    let comments = await getPostComments(req.params.post, req.params.topic);
+    let comments_read = await userCommentsRead(user.id, req.params.post);
+    res.render("post", {
         topic,
         post,
-        comments: shuffle(await getPostComments(req.params.post))
+        comments_read,
+        user_id: user.id,
+        comments: shuffle(comments?.docs)
     });
 });
 
 app.post("/chat", verifyToken, async (req,res)=>{
-    const {title, context} = req.body;
     if(req.anonymous)
-        return res.redirect(`/login/?next=${req.originalUrl}`);
+        return res.redirect(`/login?next=${req.originalUrl}`);
+    const {title, context} = req.body;
     const username = req.JWTBody.username;
     const users = await db.collection("users").where("username", "==", username).get();
     const user = users.docs[0];
-    if(user.get("karma") >= 50){
+    if(user.get("verified") || user.get("karma") >= 50){
         db.collection("users").doc(user.id).update({karma: user.get("karma") - 50});
         db.collection("Topics").add({
             author: username,
@@ -211,7 +291,7 @@ app.post("/chat/:topic", verifyToken, async (req,res)=>{
     const username = req.JWTBody.username;
     const users = await db.collection("users").where("username", "==", username).get();
     const user = users.docs[0];
-    if(permissions.canUserPost(user)){
+    if(canUserPost(user)){
         db.collection("Topics").doc(req.params.topic).collection("Posts").add({
             author: username,
             date: new Date().toISOString(),
@@ -230,15 +310,24 @@ app.get("/karma_please", verifyToken, async (req,res)=>{
     const user = users.docs[0];
     await db.collection("users").doc(user.id).update({karma: user.get("karma") + 500});
     res.send("The karma has been added to your account!");
-})
+});
 
 app.get("/rules", verifyToken, (req, res)=>{
     res.render("rules");
-})
+});
 
 app.get("/about_us", verifyToken, (req, res)=>{
     res.render("about_us");
+});
+
+// API stuff
+
+app.post("/increaseUserCommentsRead", async (req,res)=>{
+    const {user_id, post_id} = req.body;
+    await userRead(user_id, post_id);
+    res.send("Comment marked as read if no error");
 })
+
 const PORT = process.env.PORT || 80;
 
 app.listen(PORT);

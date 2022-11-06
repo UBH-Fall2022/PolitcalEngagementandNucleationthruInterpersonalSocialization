@@ -1,0 +1,6 @@
+mixin comment_template(comment)
+    .row 
+        .col.text-white
+            .comment(id=`${comment.id}`)
+                each paragraph in comment.get("content") ? comment.get("content").split("\n") : []
+                    p.d-block= paragraph
