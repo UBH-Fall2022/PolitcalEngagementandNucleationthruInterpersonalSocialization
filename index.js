@@ -150,12 +150,12 @@ app.get("/chat/:topic/", verifyToken, async (req,res)=>{
     const username = req.JWTBody.username;
     const users = await db.collection("users").where("username", "==", username).get();
     const user = users.docs[0];
-    const user_post = await permissions.getUser_Posts(user.id, req.params.topic)
+    const user_post = await permissions.getUser_Topic(user.id, req.params.topic)
 
     res.render("topic", {
         topic,
         posts: shuffle(posts.docs),
-        comments_read: await numUserRead(user_post)
+        comments_read: await numUserWrite(user_post)
     });
 });
 
@@ -178,10 +178,14 @@ app.get("/chat/:topic/:post", verifyToken, async (req,res)=>{
         console.error("Post Not Found");
         return res.redirect("/");
     }
+    const username = req.JWTBody.username;
+    const users = await db.collection("users").where("username", "==", username).get();
+    const user = users.docs[0];
+    const user_post = await permissions.canUserPost(user.id, req.params.topic)
     res.render("topic", {
         topic,
         post,
-        comments: shuffle(await getPostComments(req.params.post))
+        comments: shuffle(await numUserRead(req.params.post))
     });
 });
 
