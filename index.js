@@ -148,9 +148,14 @@ app.get("/chat/:topic/", verifyToken, async (req,res)=>{
         return res.redirect("/");
     }
     const posts = await getTopicPosts(req.params.topic);
+    const users = await db.collection("users").where("username", "==", username).get();
+    const user = users.docs[0];
+    const user_post = await getUser_Posts(user.id, req.params.topic)
+
     res.render("topic", {
         topic,
-        posts: shuffle(posts.docs)
+        posts: shuffle(posts.docs),
+        comments_read: await numUserRead(user_post)
     });
 });
 

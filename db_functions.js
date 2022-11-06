@@ -1,5 +1,6 @@
 async function getUser_Connection(userPk, connectPk, dbName){
     let user_post = await db.collection(dbName).where('user_id', '==', userPk).where('post_id', connectPk).get();
+    user_post = user_post.docs[0]
     if (user_post.size==1){
         return user_post;
     }else{
@@ -36,9 +37,22 @@ async function canUserComment(user_post){
 }
 
 async function canUserPost(user_topic){
-    return await canUserThis(user_post, "comments_made");
+    return await canUserThis(user_topic, "comments_made");
 }
 
+async function howMany(user_this, field){
+    const user = user_this.docs[0];
+    const cur_this_done = user.get(field)
+    return cur_this_done
+}
+
+async function numUserRead(user_post){
+    return await canUserThis(user_post, "comments_read");
+}
+
+async function numUserWrite(user_topic){
+    return await canUserThis(user_topic, "comments_made");
+}
 
 async function userRead(user, user_post){
     const cur_comments_read = user_post.get("comments_read")
