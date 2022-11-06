@@ -1,6 +1,6 @@
 async function getUser_Connection(userPk, connectPk, dbName){
-    let user_post = await db.collection(dbName).where('user_id', '==', userPk).where('post_id', connectPk).get();
-    if (user_post.size==1){
+    let user_post = await db.collection(dbName).where('user_id', '==', userPk).where('post_id', '==', connectPk).get();
+    if (user_post.size == 1){
         return user_post;
     }else{
         throw new Error("Found multiple user_id model with post_id, Expected Size: 1, Found "+ user_post.size)

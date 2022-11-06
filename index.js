@@ -183,7 +183,7 @@ app.get("/chat/:topic/:post", verifyToken, async (req,res)=>{
 app.post("/chat", verifyToken, async (req,res)=>{
     const {title, context} = req.body;
     if(req.anonymous)
-        return res.sendStatus(401);
+        return res.redirect(`/login/?next=${req.originalUrl}`);
     const username = req.JWTBody.username;
     const users = await db.collection("users").where("username", "==", username).get();
     const user = users.docs[0];
@@ -194,6 +194,23 @@ app.post("/chat", verifyToken, async (req,res)=>{
             date: new Date().toISOString(),
             title,
             context,
+        });
+        res.redirect("/chat");
+    }
+});
+
+app.post("/chat/:topic", verifyToken, async (req,res)=>{
+    const {title, content} = req.body;
+    if(req.anonymous)
+        return res.redirect(`/login/?next=${req.originalUrl}`);
+    const username = req.JWTBody.username;
+    const users = await db.collection("users").where("username", "==", username).get();
+    const user = users.docs[0];
+    if(canUserPost(user)){
+        db.collection("Topics").doc(req.params.topic).collection("Posts").add({
+            author: username,
+            date: new Date().toISOString(),
+            title
         });
         res.redirect("/chat");
     }

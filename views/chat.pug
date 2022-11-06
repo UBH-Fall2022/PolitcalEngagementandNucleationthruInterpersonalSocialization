@@ -3,18 +3,14 @@ html(lang="en")
     head 
         include includes/head
         title Chat
-        link(rel="stylesheet", href="/static/styles/chat.css")
-
+        link(rel="stylesheet" href="/static/styles/chat.css")
+        link(rel="stylesheet" href="/static/styles/global.css")
     body 
         include includes/navbar
         .container-fluid
-
-            .row 
-                .userKarama 
-                    #{user_karma}
             .row.mt-2
                 .col
-                    form(action="/chat", method="post") 
+                    form.text-white(action="/chat", method="post")
                         .form-row.my-2
                             .col-md-4
                                 label(for="title") Title
@@ -26,7 +22,8 @@ html(lang="en")
                             .col-md-8
                                 input.form-control(type="url" name="context" placeholder="https://www....")
                         .form-row.my-2
-                            .col-md-4.d-xs-none.d-md-block
+                            .col-md-4
+                                p.text-center #{user_karma}/50
                             .col-md-8
                                 input.w-100.btn.btn-outline-primary(type="submit", value="Post")
             include includes/topic_template
