@@ -99,4 +99,10 @@ app.post("/register", async (req,res)=>{
     });
 });
 
+
+app.get("/test", (_,r)=>{
+    r.render("includes/topicButton");
+})
+
+
 app.listen(80);
