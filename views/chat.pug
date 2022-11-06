@@ -1,0 +1,10 @@
+doctype html
+html(lang="en")
+    head 
+        include includes/head
+        title Chat
+    body 
+        include includes/navbar
+        form(action="/chat", method="post") 
+            input(type="text" name="message")
+            input(type="submit", value="Send")

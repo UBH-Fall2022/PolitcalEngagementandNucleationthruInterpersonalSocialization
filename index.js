@@ -91,4 +91,16 @@ app.post("/register", async (req,res)=>{
     });
 });
 
+app.get("/chat", verifyToken, (req,res)=>{
+    if(req.anonymous)
+        return res.redirect(`/login?next=${req.originalUrl}`);
+    res.render("chat");
+});
+
+app.post("/chat", verifyToken, (req,res)=>{
+    if(req.anonymous)
+        return res.sendStatus(401);
+    // Make a 
+});
+
 app.listen(80);
