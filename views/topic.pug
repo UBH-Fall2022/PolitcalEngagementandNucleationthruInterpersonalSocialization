@@ -2,23 +2,30 @@ doctype html
 html(lang="en")
     head 
         title #{topic.get("title")}
+        link(rel="stylesheet", href="/static/styles/topic.css")
         include includes/head
     body 
         include includes/navbar
-        .container-fluid
+        <div id="main">
+            include includes/topic_template
+            +topic_template(topic)
             .row 
-                .col
-                    h1 #{topic.get("title")}
-                    p
+                .col 
+                    .context
                         a(href=`${topic.get("context")}`) #{topic.get("context")}
+            each post in posts
+                .white
+                    .row 
+                        .col 
+                            h3 #{post.title}
+                            each paragraph in post.get("content").split("\n")
+                                p= paragraph
+                
             .row
                 .col
                     form(method="POST")
                         textarea#message(name="message")
                         button.btn.btn-outline-primary(type="submit") Post
-            each post in posts
-                .row 
-                    .col 
-                        h3 #{post.title}
-                        each paragraph in post.get("content").split("\n")
-                            p= paragraph
+
+        </div>
+            

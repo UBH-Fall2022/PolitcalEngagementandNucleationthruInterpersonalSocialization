@@ -11,6 +11,10 @@ body{
     border-radius: 100px;
     padding-left: 2em;
 }
+.topic > span{
+    margin: 2em;
+}
+
 .userKarama{
     color: white;
 }

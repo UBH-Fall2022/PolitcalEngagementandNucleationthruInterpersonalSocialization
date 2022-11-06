@@ -1,0 +1,15 @@
+#main{
+display: flex;
+    flex-direction: column;
+    margin: auto;
+    width: fit-content;
+}
+.context{
+    background-color: black;
+    border-radius: 25px;
+    padding: 3em;
+
+}
+.white{
+    color: white;
+}
