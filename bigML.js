@@ -1,4 +1,5 @@
 const bigml = require('bigml');
+// Source: https://www.kaggle.com/datasets/kapastor/democratvsrepublicantweets?resource=download
 const deepnet = new bigml.LocalDeepnet(
      'deepnet/6367247c8be2aa364c004715', new bigml.BigML("owenstuartlee", "7815bbbc18255864b0df322cd83c8723b7a4f68b", {"domain": "bigml.io"}));
 module.exports = async function(inputText){

@@ -10,6 +10,6 @@
                 user_id: document.getElementById("user_id").textContent,
                 post_id: location.href.split("/").reverse().filter(x=>x.length)[0]
             }),
-        });
+        }).then(_=>location.reload());
     });
 });
