@@ -11,18 +11,14 @@ html(lang="en")
                     h1 #{topic.get("title")}
                     p
                         a(href=`${topic.get("context")}`) #{topic.get("context")}
-                    each paragraph in topic.get("content").split("\n")
-                        p= paragraph
             .row
                 .col
                     form(method="POST")
                         textarea#message(name="message")
                         button.btn.btn-outline-primary(type="submit") Post
-            - var x = 0;
-            while x < posts.length
+            each post in posts
                 .row 
                     .col 
-                        h3 #{posts[x].title}
-                        each paragraph in post[x].content.split("\n")
+                        h3 #{post.title}
+                        each paragraph in post.get("content").split("\n")
                             p= paragraph
-                - x++

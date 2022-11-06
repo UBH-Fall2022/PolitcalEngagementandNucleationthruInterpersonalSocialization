@@ -1,6 +1,6 @@
 module.exports = function(allCommentData, recursive=false){
     let orderedComments = [];
-    const sortedComments = allCommentData.sort((a,b) => a.politicization_index - b.politicization_index);
+    const sortedComments = allCommentData.sort((a,b) => a.get("politicization_index") - b.get("politicization_index"));
     let polList=[];
     for (let x of sortedComments){
         polList.push(x.get("politicization_index"));

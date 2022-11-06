@@ -110,14 +110,11 @@ async function getTopic(topic_id){
 }
 
 async function getPost(post_id, topic_id){
-    return await getTopic(topic_id).collection("Posts").doc(post_id).get();
+    return await db.collection("Topics").doc(topic_id).collection("Posts").doc(post_id).get();
 }
 
 async function getTopicPosts(topic_id){
-    const topic = await getTopic(topic_id);
-    if(!topic || !topic.exists)
-        return null;
-    return await topic.collection("posts").get();
+    return await db.collection("Topics").doc(topic_id).collection("Posts").get();
 }
 
 async function getPostComments(post_id, topic_id){
@@ -146,12 +143,11 @@ app.get("/chat/:topic/", verifyToken, async (req,res)=>{
         console.error("Topic Not Found");
         return res.redirect("/");
     }
-    console.log(await getTopicPosts(req.params.topic));
-    res.send("acsaa");
-    // res.render("topic", {
-    //     topic,
-    //     posts: shuffle(await getTopicPosts(req.params.topic))
-    // });
+    const posts = await getTopicPosts(req.params.topic);
+    res.render("topic", {
+        topic,
+        posts: shuffle(posts.docs)
+    });
 });
 
 app.get("/chat/:topic/:post", verifyToken, async (req,res)=>{

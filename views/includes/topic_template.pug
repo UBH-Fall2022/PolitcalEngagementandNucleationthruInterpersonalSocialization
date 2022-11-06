@@ -1,0 +1,5 @@
+mixin topic_template(topic)
+    h3
+        a(href=`/chat/${topic.id}`)= topic.get("title")
+    span By: #{topic.get("author")}
+    span= topic.get("date")

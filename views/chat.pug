@@ -10,11 +10,6 @@ html(lang="en")
                 form(action="/chat", method="post") 
                     input(type="text" name="message")
                     input(type="submit", value="Send")
+            include includes/topic_template
             each topic in topics 
-                .row 
-                    .col
-                        .topic-box 
-                            h3
-                                a(href=`/chat/${topic.id}`)= topic.get("title")
-                            span By: #{topic.get("author")}
-                            span(style="float: right;")= "10/2/2022"
+                +topic_template(topic)
