@@ -7,12 +7,12 @@ html(lang="en")
     body
         include includes/navbar.pug
         script(src="/static/scripts/index.js" defer) 
-        .container-fluid
-            .row 
-                .col-md-6
-                    .bubble
-                        .bubble-title 
-                            |What do we do?
-                        .bubble-content
-                            |We help facilitate political discourse
+        <div id="heading-row">
+        .what-we-do 
+            |What do we do?
+        .bubble-content
+            |We help facilitate political discourse
+        img(id="content" src="/static/Group 30.png", alt="", srcset="")                        
+        </div>
+                        
                      

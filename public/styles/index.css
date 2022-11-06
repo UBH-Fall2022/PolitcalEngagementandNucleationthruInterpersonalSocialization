@@ -4,16 +4,28 @@ body, html{
     color:aliceblue;
     height: 100vh;
 }
-.container-fluid{
-    margin: 0 20% 0 20%;
+body{
+    text-align: center;
+}
+.bubble{
+    margin: auto 0 auto 0;
 }
 
 .bubble-title{
     font-size: 3em;
     font-weight: 3000;
 }
+
 .bubble-content{
     font-size: 2em;
     font-weight: 3000;
+}
+#heading-row{
+    display:flex;
+    flex-direction: column;
 
+}
+
+#content{
+    width: 80vw;
 }

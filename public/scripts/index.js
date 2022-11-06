@@ -42,7 +42,7 @@ class shiningStar{
 var genStars = setInterval(function(){
     const starImg = document.createElement("img")
     starImg.src = "/static/Star 4.svg"
-    const myStarObj = new shiningStar(Math.random() * document.body.clientWidth, Math.random() * document.body.clientHeight, starImg)
+    const myStarObj = new shiningStar(Math.random() * document.body.clientWidth, window.scrollY + Math.random() * document.body.clientHeight, starImg)
     starImg.style.width = 0
     starImg.style.height = 0
     myStarObj.display()
