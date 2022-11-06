@@ -30,39 +30,30 @@ app.get("/login", verifyToken, (req,res) => {
     res.render("login");
 });
 
-function handleLogin(res, user, password){
-    bcrypt.compare(password, user.password, (err, same)=>{
-        if(err)
-            // redirect to error page
-            res.sendStatus(500);
-        if(!same)
-            res.send(400, "Bad Password");
-        // Validate URL
-        jwt.sign({ username: user.username }, process.env.KEY, { algorithm: 'RS256' }, function(err, token) {
-            if(err)
-                res.sendStatus(500);
-            res.cookie("token", token);
-            if(req.query.next)
-                return res.redirect(req.query.next);
-            return res.redirect(".");
-        });
-    });
-}
-
 app.post("/login", async (req,res) => {
     const { identifier, password } = req.body;
-    const userQuerySnapshot = await db.collection('users').where('email', '==', identifier).get()
-    if(userQuerySnapshot.size > 1){
-        res.send(500, "You're a dumbass. You broke everything. Now watch it burn!");
-        throw new Error("Two usernames same name");
-    }else if(userQuerySnapshot.size == 1){
-        const user = userQuerySnapshot.docs.data()
-        return handleLogin(res, user, password);
-    }else if (!user){
-        res.send(404, "User Not Found :(");
+    let users = await db.collection('users').where('email', '==', identifier).get();
+    if(!users.size)
+        users = await db.collection('users').where('username', '==', identifier).get();
+    if(!users.size){
+        return res.status(404).send("User Not Found :(");
     }
-    console.error(err);
-    res.send(500, "Oopsie :(");
+    const user = users.docs[0];
+    bcrypt.compare(password, user.get("password"), (err, same)=>{
+        if(err)
+            // redirect to error page
+            return res.status(500, err);
+        if(!same)
+            return res.status(400).send("Bad Password");
+        // Validate URL
+        jwt.sign({ username: user.get("username") }, process.env.KEY, function(err, token) {
+            if(err)
+                return res.status(500).send("token not created");
+            if(req.query.next)
+                return res.cookie("token", token).redirect(req.query.next);
+            return res.cookie("token", token).redirect(".");
+        });
+    });
 });
 
 app.get("/register", verifyToken, (req,res) => {
@@ -71,27 +62,28 @@ app.get("/register", verifyToken, (req,res) => {
 
 app.post("/register", async (req,res)=>{
     const { username, email, password } = req.body;
-    console.log(username);
-    const userQuerySnapshot = await db.collection('users').where('username', '==', username).get()
-    console.log(userQuerySnapshot);
-    if(userQuerySnapshot.size > 1){
+    const users = await db.collection('users').where('username', '==', username).get()
+    if(users.size > 1){
         res.send(500, "You're a dumbass. You broke everything. Now watch it burn!");
         throw new Error("Two usernames same name");
-    }else if(userQuerySnapshot.size == 1){
+    }else if(users.size == 1){
         return res.send(400, "User already exists");
     }
     await db.collection('users').add({
         username: username,
         email: email,
-        password: password,
+        password: bcrypt.hashSync(password, 10),
         verified: false,
         total_read: 0,
         karma: 0,
         read_today: 0,
     });
-    jwt.sign({username: username}, process.env.KEY, { algorithm: 'RS256' }, function(err, token) {
-        if(err)
-            return res.sendStatus(500);
+    jwt.sign({username: username}, process.env.KEY, function(err, token) {
+        if(err){
+            console.error(err);
+            return res.status(500).send("jwt failed");
+        }
+        console.log("Token: ", token);
         res.cookie("token", token);
         if(req.query.next)
             return res.redirect(req.query.next);

@@ -20,9 +20,9 @@ html(lang="en")
                         .row 
                             form.form-group(action="/login" method="POST")
                                 .row
-                                    input.form__input#username(name="username" placeholder="Username")
+                                    input.form__input#identifier(name="identifier" placeholder="Username or Email")
                                 .row 
-                                    input.form__input#password(name="password" placeholder="Password")
+                                    input.form__input#password(type="password" name="password" placeholder="Password")
                                 .row 
                                     input.d-inline#remember_me(style="width: 50%;" type="checkbox" name="remember_me")
                                     label.w-50(for="remember_me") Remember Me!
@@ -30,4 +30,4 @@ html(lang="en")
                                     input.btn(type="submit" value="Submit")
                         .row 
                             p Don't have an account? 
-                                a(href="#") Register Here
+                                a(href="/register") Register Here
