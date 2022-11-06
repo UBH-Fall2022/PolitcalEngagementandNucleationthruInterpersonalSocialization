@@ -15,34 +15,23 @@ async function userCommentsRead(user_id, post_id){
     if(data.size == 0)
         return 0;
     else
-        return user_post.query.docs[0].get("comments_read");
+        return data.docs[0].get("comments_read");
 }
 
 async function userCommentsMade(user_id, topic_id){
-    const user_topic_query = await getUser_Other(user_id, topic_id, "topic", "user_topic");
-    if(!user_topic_query.size)
+    let data = await db.collection("User_Topic").where("user_id", "==", user_id).where("topic_id", "==", topic_id).get();
+    if(data.size == 0)
         return 0;
-    return user_topic_query.docs[0].get("comments_made");
+    else
+        return data.docs[0].get("comments_made");
 }
 
-// Expect paramaters are preprocessed maps
-async function canUserThis(user_doc, other_id, field){
-    switch(field){
-        case "comment":
-            return userCommentsRead(user.id, other_id) >= 4;
-        case "post":
-            return userPostsInteractedWith(user.id, other_id) >= 4;
-        default:
-            throw new Error("Unimplemented field");
-    }
+async function canUserComment(user_id, post_id){
+    return await userCommentsRead(user_id, post_id) >= 4;
 }
 
-async function canUserComment(user_post){
-    return await canUserThis(user_post, "comments_read");
-}
-
-async function canUserPost(user_topic){
-    return await canUserThis(user_topic, "comments_made");
+async function canUserPost(user_id, topic_id){
+    return await userCommentsMade(user_id, topic_id) >= 4;
 }
 
 async function userRead(user_id, post_id){
@@ -167,7 +156,7 @@ app.post("/register", async (req,res)=>{
         res.cookie("token", token);
         if(req.query.next)
             return res.redirect(req.query.next);
-        return res.redirect(".");
+        return res.redirect("/");
     });
 });
 
@@ -281,7 +270,7 @@ app.post("/chat", verifyToken, async (req,res)=>{
             title,
             context,
         });
-        res.redirect("/chat");
+        res.redirect(req.originalUrl);
     }
 });
 
@@ -292,13 +281,30 @@ app.post("/chat/:topic", verifyToken, async (req,res)=>{
     const username = req.JWTBody.username;
     const users = await db.collection("users").where("username", "==", username).get();
     const user = users.docs[0];
-    if(canUserPost(user)){
+    if(canUserPost(user.id, req.params.topic)){
         db.collection("Topics").doc(req.params.topic).collection("Posts").add({
             author: username,
             date: new Date().toISOString(),
             title
         });
-        res.redirect("/chat");
+        res.redirect(req.originalUrl);
+    }
+});
+
+app.post("/chat/:topic/:post", verifyToken, async (req,res)=>{
+    const {content} = req.body;
+    if(req.anonymous)
+        return res.redirect(`/login/?next=${req.originalUrl}`);
+    const username = req.JWTBody.username;
+    const users = await db.collection("users").where("username", "==", username).get();
+    const user = users.docs[0];
+    if(canUserComment(user.id, req.params.post)){
+        db.collection("Topics").doc(req.params.topic).collection("Posts").doc(req.params.post).collection("Comments").add({
+            author: username,
+            date: new Date().toISOString(),
+            content
+        });
+        res.redirect(req.originalUrl);
     }
 });
 
