@@ -63,63 +63,55 @@ function handleLogin(res, user, password){
 
 app.post("/login", (req,res) => {
     const { identifier, password } = req.body;
-
-
-    users.find({email: identifier}, (err, [user])=>{
-        if(err){
-            console.error(err);
-            res.send(500, "Oopsie :(");
-        }
-        if(user)
+    const userQuerySnapshot = db.collection('users').where('username', '==', identifier).get()
+    if(userQuerySnapshot.size > 1){
+        res.send(500, "You're a dumbass. You broke everything. Now watch it burn!");
+        throw new Error("Two usernames same name");
+    }
+    else if(userQuerySnapshot.size == 1){
+        const user = userQuerySnapshot.docs[0]
+        return handleLogin(res, user, password);
+    }else {
+        const userQuerySnapshot = db.collection('users').where('email', '==', identifier).get()
+        if(userQuerySnapshot.size > 1){
+            res.send(500, "You're a dumbass. You broke everything. Now watch it burn!");
+            throw new Error("Two usernames same name");
+        }else if(userQuerySnapshot.size == 1){
+            const user = userQuerySnapshot.docs[0]
             return handleLogin(res, user, password);
-
-        users.find({username: identifier}, (err, [user])=>{
-            if(err){
-                console.error(err);
-                res.sendStatus(500);
-            } else if (!user){
-                res.send(404, "User Not Found :(");
-            }
-            handleLogin(res, user, password);
-        });
-    });
+        }else if (!user){
+            res.send(404, "User Not Found :(");
+        }
+        console.error(err);
+        res.send(500, "Oopsie :(");
+    }
     res.send(500, "Something went very wrong");
 });
 
 
-app.get("/register", (req,res)=>{
+app.get("/register", async (req,res)=>{
     const { username, email, password } = req.body;
-
-    users.find({username}, async (err, [user])=>{
-        if(err){
-            console.error(err);
-            res.send(500, "Oopsie :(");
-        } else if(!user){
-            res.send(400, "User already exists");
-        }
-        const res = await db.collection('users').add({
-            username: username,
-            email: email,
-            password: password,
-            verified: false,
-            total_read: 0,
-            karma: 0,
-            read_today: 0,
-          }).then((err)=>{
-            if(err){
-                console.error(err);
-                res.send(500, "error adding user to database");
-            }
-            jwt.sign({username: user.username}, process.env.KEY, { algorithm: 'RS256' }, function(err, token) {
-                if(err)
-                    res.sendStatus(500);
-                res.cookie("token", token);
-                if(req.query.next)
-                    return res.redirect(req.query.next);
-                return res.redirect(".");
-            });
-        });
-    })
+    const user = db.collection('users').where('username', '==', username).get()
+    if(user){
+        return res.send(400, "User already exists");
+    }
+    await db.collection('users').add({
+        username: username,
+        email: email,
+        password: password,
+        verified: false,
+        total_read: 0,
+        karma: 0,
+        read_today: 0,
+    });
+    jwt.sign({username: user.username}, process.env.KEY, { algorithm: 'RS256' }, function(err, token) {
+        if(err)
+            res.sendStatus(500);
+        res.cookie("token", token);
+        if(req.query.next)
+            return res.redirect(req.query.next);
+        return res.redirect(".");
+    });
 });
 
 app.listen(80);
