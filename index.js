@@ -19,6 +19,7 @@ const EMAIL_REGEX = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 app.use(require('cookie-parser')());
+app.use("/static", express.static(`${__dirname}/public`));
 app.set('view engine', 'pug');
 
 app.get("/", (req,res) => {
