@@ -180,22 +180,42 @@ app.get("/chat/:topic/:post", verifyToken, async (req,res)=>{
     });
 });
 
-app.post("/chat", verifyToken, (req,res)=>{
+app.post("/chat", verifyToken, async (req,res)=>{
+    const {title, context} = req.body;
     if(req.anonymous)
         return res.sendStatus(401);
     const username = req.JWTBody.username;
-    const user = db.collection("Users").where("username", "==", username).get();
+    const users = await db.collection("users").where("username", "==", username).get();
+    const user = users.docs[0];
     if(user.get("karma") >= 50){
-        // Make topic
+        db.collection("users").doc(user.id).update({karma: user.get("karma") - 50});
+        db.collection("Topics").add({
+            author: username,
+            date: new Date().toISOString(),
+            title,
+            context,
+        });
+        res.redirect("/chat");
     }
 });
 
-app.get("/rules", verifyToken, (req, res)=>{
-    res.render("rules")
+app.get("/karma_please", verifyToken, async (req,res)=>{
+    if(req.anonymous){
+        return res.redirect("/login");
+    }
+    const username = req.JWTBody.username;
+    const users = await db.collection("users").where("username", "==", username).get();
+    const user = users.docs[0];
+    await db.collection("users").doc(user.id).update({karma: user.get("karma") + 500});
+    res.send("The karma has been added to your account!");
 })
 
-app.get("/aboutus", verifyToken, (req, res)=>{
-    res.render("aboutus")
+app.get("/rules", verifyToken, (req, res)=>{
+    res.render("rules");
+})
+
+app.get("/about_us", verifyToken, (req, res)=>{
+    res.render("about_us");
 })
 const PORT = process.env.PORT || 80;
 

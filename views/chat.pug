@@ -8,13 +8,27 @@ html(lang="en")
     body 
         include includes/navbar
         .container-fluid
-            .row
-                form(action="/chat", method="post") 
-                    input(type="text" name="message")
-                    input(type="submit", value="Send")
+
             .row 
                 .userKarama 
                     #{user_karma}
+            .row.mt-2
+                .col
+                    form(action="/chat", method="post") 
+                        .form-row.my-2
+                            .col-md-4
+                                label(for="title") Title
+                            .col-md-8
+                                input.form-control(type="text" name="title" placeholder="Title...")
+                        .form-row.my-2
+                            .col-md-4
+                                label(for="cotext") Context
+                            .col-md-8
+                                input.form-control(type="url" name="context" placeholder="https://www....")
+                        .form-row.my-2
+                            .col-md-4.d-xs-none.d-md-block
+                            .col-md-8
+                                input.w-100.btn.btn-outline-primary(type="submit", value="Post")
             include includes/topic_template
             <div class="topicHolder">
                 each topic in topics 
