@@ -3,8 +3,10 @@ html(lang="en")
     head
         title MyView
         include includes/head
-    body 
+        link(rel="stylesheet", href="/static/styles/index.css")
+    body
         include includes/navbar.pug
+        script(src="/static/scripts/index.js" defer) 
         .container-fluid
             .row 
                 .col-md-6
@@ -13,3 +15,4 @@ html(lang="en")
                             |What do we do?
                         .bubble-content
                             |We help facilitate political discourse
+                     
