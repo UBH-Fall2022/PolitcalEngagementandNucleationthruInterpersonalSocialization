@@ -1,0 +1,9 @@
+.topicHolder{
+    display: flex;
+    flex-direction: column;
+    flex-shrink: unset;
+    width: fit-content;
+    margin: auto;
+    height: 60vh;
+    justify-content: flex-start;
+}

@@ -3,6 +3,8 @@ html(lang="en")
     head 
         include includes/head
         title Chat
+        link(rel="stylesheet", href="/static/styles/chat.css")
+
     body 
         include includes/navbar
         .container-fluid
@@ -10,6 +12,11 @@ html(lang="en")
                 form(action="/chat", method="post") 
                     input(type="text" name="message")
                     input(type="submit", value="Send")
+            .row 
+                .userKarama 
+                    #{user_karma}
             include includes/topic_template
-            each topic in topics 
-                +topic_template(topic)
+            <div class="topicHolder">
+                each topic in topics 
+                    +topic_template(topic)
+            </div>

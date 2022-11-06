@@ -128,8 +128,12 @@ app.get("/chat", verifyToken, async (req,res)=>{
     if(req.anonymous)
         return res.redirect(`/login?next=${req.originalUrl}`);
     const topics = await getTopics();
+    const username = req.JWTBody.username;
+    const temp = await db.collection("users").where("username", "==", username).get();
+    const user = temp.docs[0];
     res.render("chat", {
         topics: await getTopics(),
+        user_karma: user.get("karma"),
     });
 });
 
