@@ -3,7 +3,7 @@ module.exports = function(allCommentData, recursive=false){
     const sortedComments = allCommentData.sort((a,b) => a.politicization_index - b.politicization_index);
     let polList=[];
     for (let x of sortedComments){
-        polList.push(x["politicization_index"]);
+        polList.push(x.get("politicization_index"));
     }
     while (polList.length >= 4){
         var index = polList.length;
@@ -17,7 +17,7 @@ module.exports = function(allCommentData, recursive=false){
         }
         polList=[];
         for (let x of sortedComments){
-            polList.push(x["politicization_index"]);
+            polList.push(x.get("politicization_index"));
         }
         var shuffled = grouping;
         const shuffledArray = shuffled.sort((a,b) => 0.5 - Math.random());

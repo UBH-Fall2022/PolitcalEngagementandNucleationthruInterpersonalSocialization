@@ -8,6 +8,8 @@ initializeApp({
 });
 const db = getFirestore();
 
+const shuffle = require("./viewShuffler.js");
+
 const express = require("express");
 const app = express();
 const bcrypt = require("bcrypt");
@@ -129,12 +131,34 @@ app.get("/chat/:topic/", verifyToken, async (req,res)=>{
     console.log(await getTopicPosts(req.params.topic));
     res.render("topic", {
         topic,
-        // posts: await getTopicPosts(req.params.topic)
+        posts: shuffle(await getTopicPosts(req.params.topic))
     });
 });
 
 app.get("/chat/:topic/:post", verifyToken, async (req,res)=>{
-    res.end();
+    if(!req.params.topic){
+        console.error("No topic");
+        return res.redirect("/chat");
+    }
+    const topic = await getTopic(req.params.topic);
+    if(!topic){ // 404
+        console.error("Topic Not Found");
+        return res.redirect("/");
+    }
+    if(!req.params.post){
+        console.error("No post");
+        return res.redirect("/chat");
+    }
+    const post = await getPost(req.params.post);
+    if(!post){ // 404
+        console.error("Post Not Found");
+        return res.redirect("/");
+    }
+    res.render("topic", {
+        topic,
+        post,
+        comments: shuffle(await getPostComments(req.params.post))
+    });
 });
 
 app.post("/chat", verifyToken, (req,res)=>{
