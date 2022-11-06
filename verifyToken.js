@@ -5,9 +5,9 @@ function verifyToken(req,res,next){
 		req.anonymous = true;
 		next();
 	} else {
-		req.anonymous = false;
 		if(typeof req.cookies.access_token !== 'undefined'){
-			jwt.verify(req.cookies.access_token,process.env.SECRET, function(err, decoded) {
+			jwt.verify(req.cookies.access_token,process.env.KEY, function(err, decoded) {
+				req.anonymous = false;
 				if(err){
 					res.status(403).send("Invalid token");
 				} else {

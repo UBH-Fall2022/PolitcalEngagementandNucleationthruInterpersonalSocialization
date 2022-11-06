@@ -2,6 +2,7 @@
 const { initializeApp, applicationDefault, cert } = require('firebase-admin/app');
 const { getFirestore, Timestamp, FieldValue } = require('firebase-admin/firestore');
 const serviceAccount = require('./politicalsentimentsocialmedia-912a5a03cd6b.json');
+const permissions = require('db_functions.js');
 initializeApp({
   credential: cert(serviceAccount)
 });
