@@ -1,19 +1,33 @@
 doctype html
 html(lang="en")
     head
-        meta(charset="UTF-8")
-        meta(http-equiv="X-UA-Compatible", content="IE=edge")
-        meta(name="viewport", content="width=device-width, initial-scale=1.0")
         title Login
-    body 
-        form(action="/login", method="post")
-            .form-group-row
-                label.col-sm-2(for="email") Email
-                .col-sm-10 
-                    input.form-control-plaintext#email(name="email" type="email")
-            .form-group-row 
-                label.col-sm-2.col-form-label(for="password") Password 
-                .col-sm-10
-                    input.form-control#password(name="password" type="password")
-            .form-group-row 
-                input(type="submit", value="Login")  
+        include includes/head
+        link(rel="stylesheet", href="/static/styles/login.css")
+    body
+        include includes/navbar.pug
+        .container-fluid 
+            .row.main-content.bg-success.text-center
+                .col-md-4.text-center.company__info
+                    span.company__logo 
+                        h2 
+                            .fa.fa-android
+                    h4.company_title Your Company Name
+                .col-md-8.col-xs-12.col-sm-12.login_form
+                    .container-fluid 
+                        .row 
+                            h2 Log In
+                        .row 
+                            form.form-group(action="/login" method="POST")
+                                .row
+                                    input.form__input#username(name="username" placeholder="Username")
+                                .row 
+                                    input.form__input#password(name="password" placeholder="Password")
+                                .row 
+                                    input.d-inline#remember_me(style="width: 50%;" type="checkbox" name="remember_me")
+                                    label.w-50(for="remember_me") Remember Me!
+                                .row 
+                                    input.btn(type="submit" value="Submit")
+                        .row 
+                            p Don't have an account? 
+                                a(href="#") Register Here

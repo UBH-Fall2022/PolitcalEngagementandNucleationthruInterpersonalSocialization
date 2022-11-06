@@ -1,9 +1,15 @@
 doctype html
 html(lang="en")
     head
-        meta(charset="UTF-8")
-        meta(http-equiv="X-UA-Compatible", content="IE=edge")
-        meta(name="viewport", content="width=device-width, initial-scale=1.0")
-        title The Dating Spot
+        title MyView
+        include includes/head
     body 
-        
+        include includes/navbar.pug
+        .container-fluid
+            .row 
+                .col-md-6
+                    .bubble
+                        .bubble-title 
+                            |What do we do?
+                        .bubble-content
+                            |We help facilitate political discourse 
