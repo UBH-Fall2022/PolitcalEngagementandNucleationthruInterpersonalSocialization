@@ -51,18 +51,15 @@ function handleLogin(res, user, password){
 
 app.post("/login", async (req,res) => {
     const { identifier, password } = req.body;
-    const userQuerySnapshot = await db.collection('users').where('email', '==', identifier).get()
-    if(userQuerySnapshot.size > 1){
-        res.send(500, "You're a dumbass. You broke everything. Now watch it burn!");
-        throw new Error("Two usernames same name");
-    }else if(userQuerySnapshot.size == 1){
-        const user = userQuerySnapshot.docs.data()
-        return handleLogin(res, user, password);
-    }else if (!user){
-        res.send(404, "User Not Found :(");
+    let users = await db.collection('users').where('email', '==', identifier).get();
+    if(!users.size)
+        users = await db.collection('users').where('username', '==', identifier).get();
+    if(!users.size){
+        return res.status(404).send("User Not Found :(");
     }
-    console.error(err);
-    res.send(500, "Oopsie :(");
+    const user = users.docs[0];
+    console.log(user);
+    return handleLogin(res, user, password);
 });
 
 app.get("/register", verifyToken, (req,res) => {
@@ -72,12 +69,12 @@ app.get("/register", verifyToken, (req,res) => {
 app.post("/register", async (req,res)=>{
     const { username, email, password } = req.body;
     console.log(username);
-    const userQuerySnapshot = await db.collection('users').where('username', '==', username).get()
-    console.log(userQuerySnapshot);
-    if(userQuerySnapshot.size > 1){
+    const users = await db.collection('users').where('username', '==', username).get()
+    console.log(users);
+    if(users.size > 1){
         res.send(500, "You're a dumbass. You broke everything. Now watch it burn!");
         throw new Error("Two usernames same name");
-    }else if(userQuerySnapshot.size == 1){
+    }else if(users.size == 1){
         return res.send(400, "User already exists");
     }
     await db.collection('users').add({
@@ -91,7 +88,7 @@ app.post("/register", async (req,res)=>{
     });
     jwt.sign({username: username}, process.env.KEY, { algorithm: 'RS256' }, function(err, token) {
         if(err)
-            return res.sendStatus(500);
+            return res.status(500).send("jwt failed");
         res.cookie("token", token);
         if(req.query.next)
             return res.redirect(req.query.next);
