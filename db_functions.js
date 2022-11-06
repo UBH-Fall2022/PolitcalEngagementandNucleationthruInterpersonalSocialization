@@ -1,15 +1,3 @@
-const verifyToken = require("./verifyToken.js");
-const { initializeApp, applicationDefault, cert } = require('firebase-admin/app');
-const { getFirestore, Timestamp, FieldValue } = require('firebase-admin/firestore');
-const serviceAccount = require('./politicalsentimentsocialmedia-912a5a03cd6b.json');
-const e = require("express");
-
-initializeApp({
-    credential: cert(serviceAccount)
-  });
-const db = getFirestore();
-
-
 async function getUser_Connection(userPk, connectPk, dbName){
     let user_post = await db.collection(dbName).where('user_id', '==', userPk).where('post_id', connectPk).get();
     if (user_post.size==1){
@@ -70,7 +58,3 @@ async function userPosted(user){
     const cur_karma = user.get('karma')
     return await user.update({karma: cur_karma + 4})
 }
-
-app.getO("ascac", verifyToken, (req,res)=>{
-    const username = req.JWTBody.username
-})
