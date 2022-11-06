@@ -36,7 +36,7 @@ async function getUser_Topic(userPk, topicPk){
         throw err;
     }
 }
-// assume username and postPk are single values
+// Expect paramaters are preprocessed maps
 async function canUserThis(user_this, field){
     const user = user_this.docs[0];
     const cur_this_done = user.get(field)
@@ -52,20 +52,23 @@ async function canUserPost(user_topic){
 }
 
 
-async function userRead(user_post){
-    if (user_post.size == 1){
-        const user = user_post.docs[0];
-        const cur_comments_read = user.get("comments_read")
-        return await user.update({comments_read: cur_comments_read + 1})
-    }
+async function userRead(user, user_post){
+    const cur_comments_read = user_post.get("comments_read")
+    const cur_karma = user.get('karma')
+    await user.update({karma: cur_karma + 1})
+    return await user_post.update({comments_read: cur_comments_read + 1})
 }
 
-async function userCommented(user_post){
-    if (user_post.size == 1){
-        const user = user_post.docs[0];
-        const cur_comments_made = user.get("comments_made")
-        return await user.update({comments_made: cur_comments_made + 1})
-    }
+async function userCommented(user, user_topic){
+    const cur_comments_made = user_topic.get("comments_made")
+    const cur_karma = user.get('karma')
+    await user.update({karma: cur_karma + 2})
+    return await user_topic.update({comments_made: cur_comments_made + 1})
+}
+
+async function userPosted(user){
+    const cur_karma = user.get('karma')
+    return await user.update({karma: cur_karma + 4})
 }
 
 app.getO("ascac", verifyToken, (req,res)=>{
