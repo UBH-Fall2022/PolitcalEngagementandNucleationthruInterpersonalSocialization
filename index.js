@@ -7,7 +7,6 @@ initializeApp({
   credential: cert(serviceAccount)
 });
 const db = getFirestore();
-
 const shuffle = require("./viewShuffler.js");
 
 const express = require("express");
@@ -148,9 +147,10 @@ app.get("/chat/:topic/", verifyToken, async (req,res)=>{
         return res.redirect("/");
     }
     const posts = await getTopicPosts(req.params.topic);
+    const username = req.JWTBody.username;
     const users = await db.collection("users").where("username", "==", username).get();
     const user = users.docs[0];
-    const user_post = await getUser_Posts(user.id, req.params.topic)
+    const user_post = await permissions.getUser_Posts(user.id, req.params.topic)
 
     res.render("topic", {
         topic,
