@@ -3,9 +3,11 @@ body, html{
     background-color: #131026;
     color:aliceblue;
     height: 100vh;
+    z-index: -2;
 }
 body{
     text-align: center;
+    overflow-x: hidden;
 }
 .bubble{
     margin: auto 0 auto 0;
@@ -27,5 +29,6 @@ body{
 }
 
 #content{
+    z-index: 2;
     width: 80vw;
 }

@@ -45,6 +45,7 @@ var genStars = setInterval(function(){
     const myStarObj = new shiningStar(Math.random() * document.body.clientWidth, window.scrollY + Math.random() * document.body.clientHeight, starImg)
     starImg.style.width = 0
     starImg.style.height = 0
+    starImg.classList.add("star");
     myStarObj.display()
     const starShine = setInterval(function(){
         myStarObj.shine(starShine)
