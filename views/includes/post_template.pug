@@ -1,0 +1,6 @@
+mixin post_template(post)
+    .row 
+        .col.text-white
+            h3 #{post.title}
+            each paragraph in post.get("content").split("\n")
+                p= paragraph

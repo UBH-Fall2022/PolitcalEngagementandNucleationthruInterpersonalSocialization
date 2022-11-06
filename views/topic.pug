@@ -6,26 +6,28 @@ html(lang="en")
         include includes/head
     body 
         include includes/navbar
-        <div id="main">
-            include includes/topic_template
-            +topic_template(topic)
-            .row 
-                .col 
-                    .context
-                        a(href=`${topic.get("context")}`) #{topic.get("context")}
-            each post in posts
-                .white
-                    .row 
-                        .col 
-                            h3 #{post.title}
-                            each paragraph in post.get("content").split("\n")
-                                p= paragraph
-                
+        .container-fluid 
+            h1.text-white.text-center= topic.get("title")
+            hr(color="#fff")
             .row
                 .col
-                    form(method="POST")
-                        textarea#message(name="message")
-                        button.btn.btn-outline-primary(type="submit") Post
-
-        </div>
-            
+                    form.text-white(method="POST")
+                        .form-row.my-2
+                            .col-md-4
+                                label(for="title") Title 
+                            .col-md-8
+                                input.form-control#title(name="title" placeholder="Topic...")
+                        .form-row.my-2
+                            .col-md-4
+                                label(for="content") Content 
+                            .col-md-8
+                                input.form-control#content(name="content" placeholder="Put your message here")
+                        .form-row.my-2
+                            .col-md-4.d-flex.justify-content-center
+                                progress.w-50.h-100.mx-auto(min=0 max=4 value=`${comments_read}`)
+                            .col-md-8
+                                input.w-100.btn.btn-outline-primary(type="submit", value="Post")
+            hr(color="#fff")
+            include includes/post_template
+            each post in posts
+                +post_template(post)
